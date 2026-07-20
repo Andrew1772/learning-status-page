@@ -1,0 +1,22 @@
+---
+- name: Copy chat service files
+  ansible.builtin.file:
+    src: chat.service
+    dest: /etc/systemd/system/chat.service
+    mode: "0644"
+  tags:
+    - chat 
+
+- name: Perform systemd daemon-reload
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  tags:
+    - chat 
+
+- name: Enable chat services and restart
+  ansible.builtin.systemd_service:
+    name: chat.service
+    enabled: true
+    state: restarted
+  tags:
+    - chat

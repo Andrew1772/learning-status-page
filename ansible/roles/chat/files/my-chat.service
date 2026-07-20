@@ -1,0 +1,13 @@
+[Unit]
+Description=Chat Room
+Wants=network-online.target
+
+[Service]
+SyslogIdentifier=chat
+# Environment="WEBSOCKET_URL_PREFIX={{ websocket_url_prefix }}"
+WorkingDirectory=/vagrant/chat/
+ExecStart=fastapi dev chat.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

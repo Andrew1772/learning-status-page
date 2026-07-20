@@ -2,7 +2,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 import datetime
 
-import fastapi_websockets_projects.web_redis as redis
+import chat.redis_chat as redis
 
 app = FastAPI()
 

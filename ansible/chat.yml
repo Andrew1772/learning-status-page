@@ -1,0 +1,6 @@
+---
+- name: Playbook for chat
+  hosts: chat
+  become: true
+  roles:
+    - chat
