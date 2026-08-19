@@ -1,5 +1,6 @@
 from fastapi import FastAPI, WebSocket, Request
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import json
 
@@ -56,7 +57,7 @@ default_players = [
 
 
 @app.get("/")
-def homepage(request: Request):
+async def homepage(request: Request):
     return templates.TemplateResponse(
         "index.html",
         {
@@ -65,17 +66,43 @@ def homepage(request: Request):
         }
     )
 
-class Player(BaseModel):
-    uid: str
+@app.get("/create_player")
+async def create_player_page():
+    return FileResponse("static/create_player.html")
+
+
+# Data coming FROM the browser
+class CreatePlayer(BaseModel):
     username: str
     color: str
 
 
-@app.post("/create_player")
-def create_player(player: Player):
-    return
+# Your actual Player object
+class Player():
+    def __init__(self, username, color):
+        self.username = username
+        self.color = color
 
 
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+
+    data = await websocket.receive_json()
+
+    player_data = CreatePlayer(**data)
+
+    player = Player(
+        username=player_data.username,
+        color=player_data.color,
+    )
+
+
+    await websocket.send_json({
+        "success": True,
+        "message": f"Created user {player.username}"
+    })
 
 
 
