@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 350px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        label {
+            display: block;
+            margin-top: 1rem;
+            margin-bottom: 0.4rem;
+        }
+
+        input,
+        button {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0.7rem;
+            font-size: 1rem;
+        }
+
+        button {
+            margin-top: 1.5rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+    <h1>Create User</h1>
+
+    <form id="userForm">
+
+        <label for="username">Username</label>
+        <input
+            type="text"
+            id="username"
+            name="username"
+            required
+            maxlength="30"
+        >
+
+        <label for="color">Player Color</label>
+        <input
+            type="color"
+            id="color"
+            name="color"
+            value="#3498db"
+        >
+
+        <button type="submit">
+            Create User
+        </button>
+
+    </form>
+</div>
+
+<script>
+    document
+        .getElementById("userForm")
+        .addEventListener("submit", async (event) => {
+
+            event.preventDefault();
+
+            const username =
+                document.getElementById("username").value;
+
+            const color =
+                document.getElementById("color").value;
+
+            const response = await fetch("/users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: username,
+                    color: color
+                })
+            });
+
+            if (response.ok) {
+                window.location.href = "/";
+            } else {
+                alert("Failed to create user");
+            }
+        });
+</script>
+
+</body>
+</html>
