@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create User</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, sans-serif;
+            background-color: black;
+        }
+
+        #userForm {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            width: 300px;
+            padding: 30px;
+
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        #userForm input {
+            padding: 10px;
+            font-size: 16px;
+
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #userForm button {
+            padding: 10px;
+            font-size: 16px;
+
+            border: none;
+            border-radius: 5px;
+
+            background-color: #007bff;
+            color: white;
+
+            cursor: pointer;
+        }
+
+        #userForm button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+<form id="userForm">
+    <input id="username" type="text" placeholder="Username" required>
+    <input id="color" type="text" placeholder="Color" required>
+
+    <button type="submit">Create User</button>
+</form>
+
+<script>
+const socket = new WebSocket("ws://localhost:8000/ws");
+
+document.getElementById("userForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const username = document.getElementById("username");
+    const color = document.getElementById("color");
+
+    const user = {
+        username: username.value,
+        color: color.value
+    };
+
+    socket.send(JSON.stringify(user));
+
+    // Clear the fields
+    username.value = "";
+    color.value = "";
+
+    // Put the cursor back in the username field
+    username.focus();
+});
+
+socket.onmessage = function(event) {
+    console.log(event.data);
+};
+</script>
+
+</body>
+</html>
+
