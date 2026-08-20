@@ -17,33 +17,47 @@ conn = psycopg2.connect(
 conn.autocommit = True
 
 
-def create_new_player(username="cornball", color="white"):
+def create_new_player(username="Cornball", color="white"):
+
     # Creating a cursor object
     cursor = conn.cursor()
+    while True:
 
-    uid = random.randint(1000, 9999)
-    # %s does not mean 'string' it is a substitude
-    add_player = "INSERT INTO players (uid, username, color, elo) VALUES (%s, %s, %s, %s);"
+        # %s does not mean 'string' it is a substitude
+        add_player = "INSERT INTO players (uid, username, color, elo) VALUES (%s, %s, %s, %s);"
 
-    # executing the sql
-    cursor.execute(add_player, (uid, username, color, 500))
+        try:
+            # Attempt to insert
 
-    # Closing the connection
-    conn.close()
+            uid = random.randint(1000, 9999)
+            cursor.execute(add_player, (uid, username, color, 500))
+            conn.close()
+            return # Success! Break the loop.
 
-def change_username(uid, username):
+        except psycopg2.errors.UniqueViolation:
+            # If a duplicate exists, rollback the error and try again
+            connection.rollback()
+            continue
+
+
+def update_username(uid, username):
     cursor = conn.cursor()
-    change_username = "UPDATE players SET username = %s WHERE uid = %s;"
-    cursor.execute(change_username, (username, uid))
+    update_username = "UPDATE players SET username = %s WHERE uid = %s;"
+    cursor.execute(update_username, (username, uid))
     conn.close()
 
-def change_color(uid, color):
+def update_color(uid, color):
     cursor = conn.cursor()
-    change_username = "UPDATE players SET color = %s WHERE uid = %s;"
-    cursor.execute(change_username, (color, uid))
+    update_color = "UPDATE players SET color = %s WHERE uid = %s;"
+    cursor.execute(update_color, (color, uid))
     conn.close()
 
-change_color(8662, "green")
+def update_elo(uid, elo):
+    cursor = conn.cursor()
+    update_elo = "UPDATE players SET elo = %s WHERE uid = %s;"
+    cursor.execute(update_elo, (elo, uid))
+    conn.close()
+
 
 def delete_player(uid):
 
@@ -54,4 +68,4 @@ def delete_player(uid):
     cursor.execute(delete_player, (uid,))
 
     conn.close()
-
+create_new_player()
