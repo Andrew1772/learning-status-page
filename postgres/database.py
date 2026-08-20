@@ -32,15 +32,18 @@ def create_new_player(username="cornball", color="white"):
     conn.close()
 
 def change_username(uid, username):
-
     cursor = conn.cursor()
-
     change_username = "UPDATE players SET username = %s WHERE uid = %s;"
-
     cursor.execute(change_username, (username, uid))
-
     conn.close()
 
+def change_color(uid, color):
+    cursor = conn.cursor()
+    change_username = "UPDATE players SET color = %s WHERE uid = %s;"
+    cursor.execute(change_username, (color, uid))
+    conn.close()
+
+change_color(8662, "green")
 
 def delete_player(uid):
 
