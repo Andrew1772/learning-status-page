@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <!-- The onchange attribute tells the browser to look at the selected option's value and change the page address -->
+<select name="page-navigator" onchange="location = this.value;">
+  <option value="" selected disabled>Choose a page...</option>
+  <option value="http://localhost:8000/">Home Page</option>
+  <option value="http://localhost:8000/create_player/">Create Player</option>
+  <option value="http://localhost:8000/leaderboard/">Leaderboard</option>
+</select>
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>MTG Life Tracker</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 28px;
+        }
+
+        #players {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+
+            padding: 10px;
+
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .player {
+            min-height: 40vh;
+
+            border: 3px solid var(--player-color);
+            border-radius: 15px;
+
+            padding: 15px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+
+            background: #222;
+        }
+
+        .player-name {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .life {
+            font-size: 90px;
+            font-weight: bold;
+
+            color: var(--player-color);
+        }
+
+        .buttons {
+            width: 100%;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            gap: 8px;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+
+            padding: 15px;
+
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .minus {
+            background: #a93226;
+        }
+
+        .plus {
+            background: #239b56;
+        }
+
+        #reset {
+            display: block;
+
+            margin: 10px auto 20px;
+
+            background: #555;
+
+            padding: 12px 30px;
+
+            font-size: 18px;
+        }
+
+        @media (max-width: 600px) {
+
+            #players {
+                gap: 6px;
+                padding: 6px;
+            }
+
+            .player {
+                min-height: 42vh;
+                padding: 10px;
+            }
+
+            .player-name {
+                font-size: 20px;
+            }
+
+            .life {
+                font-size: 60px;
+            }
+
+            button {
+                font-size: 18px;
+                padding: 12px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <h1>MTG Life Tracker</h1>
+
+    <div id="players"></div>
+
+    <button id="reset">
+        Reset Game
+    </button>
+
+
+    <script>
+
+        // =====================================================
+        // DISPLAY
+        // =====================================================
+
+        const players = {{ players | tojson }};
+
+        function renderPlayers() {
+
+            const container =
+                document.getElementById("players");
+
+            container.innerHTML = "";
+
+
+            players.forEach((player, index) => {
+
+                const element =
+                    document.createElement("div");
+
+                element.className = "player";
+
+                element.style.setProperty(
+                    "--player-color",
+                    player.color
+                );
+
+
+                element.innerHTML = `
+
+                    <div class="player-name">
+                        ${player.name}
+                    </div>
+
+                    <div class="life">
+                        ${player.life}
+                    </div>
+
+                    <div class="buttons">
+
+                        <button
+                            class="minus"
+                            onclick="changeLife(${index}, -5)"
+                        >
+                            -5
+                        </button>
+
+                        <button
+                            class="plus"
+                            onclick="changeLife(${index}, 5)"
+                        >
+                            +5
+                        </button>
+
+                        <button
+                            class="minus"
+                            onclick="changeLife(${index}, -1)"
+                        >
+                            -1
+                        </button>
+
+                        <button
+                            class="plus"
+                            onclick="changeLife(${index}, 1)"
+                        >
+                            +1
+
+                    </div>
+                `;
+
+
+                container.appendChild(element);
+
+            });
+        }
+
+
+        // =====================================================
+        // LIFE CHANGES
+        // =====================================================
+
+        function changeLife(playerIndex, amount) {
+
+            players[playerIndex].life += amount;
+
+            renderPlayers();
+        }
+
+
+        // =====================================================
+        // RESET
+        // =====================================================
+
+        document
+            .getElementById("reset")
+            .addEventListener("click", function() {
+
+                players.forEach(player => {
+                    player.life = 40;
+                });
+
+                renderPlayers();
+            });
+
+
+        // Initial display
+        renderPlayers();
+
+    </script>
+
+</body>
+
+</html>
