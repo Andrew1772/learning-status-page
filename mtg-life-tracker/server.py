@@ -4,6 +4,8 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import json
 
+import database
+
 # ============================================================
 # GAME VARIABLES
 # Change these from Python
@@ -71,41 +73,19 @@ async def create_player_page():
     return FileResponse("static/create_player.html")
 
 
-# Data coming FROM the browser
-class CreatePlayer(BaseModel):
-    username: str
-    color: str
-
-
-# Your actual Player object
-class Player():
-    def __init__(self, username, color):
-        self.username = username
-        self.color = color
-
-
-
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    print("here")
     await websocket.accept()
 
-    data = await websocket.receive_json()
+    print("here")
+    while True:
+        data = await websocket.receive_json()
 
-    player_data = CreatePlayer(**data)
-
-    player = Player(
-        username=player_data.username,
-        color=player_data.color,
-    )
-
-
-    await websocket.send_json({
-        "success": True,
-        "message": f"Created user {player.username}"
-    })
+        database.create_new_player(data["username"], data["color"])
+        print("here2")
 
 
 
 print("MTG Life Tracker running!")
 print("Open http://localhost:8000")
-
