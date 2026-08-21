@@ -17,22 +17,18 @@ templates = Jinja2Templates(directory="templates")
 default_players = [
     {
         "name": "Player 1",
-        "life": 40,
         "color": "red"
     },
     {
         "name": "Player 2",
-        "life": 40,
         "color": "green"
     },
     {
         "name": "Player 3",
-        "life": 40,
         "color": "purple"
     },
     {
         "name": "Player 4",
-        "life": 40,
         "color": "yellow"
     }
 ]
@@ -60,11 +56,12 @@ default_players = [
 
 @app.get("/")
 async def homepage(request: Request):
+    player_list = database.get_players()
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
-            "players": default_players,
+            "players": player_list,
         }
     )
 
@@ -75,15 +72,12 @@ async def create_player_page():
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    print("here")
     await websocket.accept()
 
-    print("here")
     while True:
         data = await websocket.receive_json()
 
         database.create_new_player(data["username"], data["color"])
-        print("here2")
 
 
 
