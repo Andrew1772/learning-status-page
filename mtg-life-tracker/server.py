@@ -56,12 +56,12 @@ default_players = [
 
 @app.get("/")
 async def homepage(request: Request):
-    player_list = database.get_players()
+    players = database.get_players()
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
-            "players": player_list,
+            "players": players,
         }
     )
 

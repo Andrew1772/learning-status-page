@@ -47,13 +47,15 @@ def get_players():
     conn = connect_to_database()
     cursor = conn.cursor()
 
-    get_players = "SELECT username FROM players;"
-
+    get_players = "SELECT uid, username FROM players;"
     cursor.execute(get_players)
     rows = cursor.fetchall()
-    usernames = [row[0] for row in rows]
 
-    return usernames
+    players = [{"uid": row[0], "username": row[1]} for row in rows]
+
+    return players
+
+get_players()
 
 
 def update_username(uid, username):

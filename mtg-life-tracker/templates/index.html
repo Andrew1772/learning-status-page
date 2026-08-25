@@ -455,11 +455,11 @@ for (let i = 0; i < 4; i++) {
 
         // Database ID
         option.value =
-            player.id;
+            player.uid;
 
         // Name shown to user
         option.textContent =
-            player.name;
+            player.username;
 
         select.appendChild(option);
 
@@ -572,7 +572,7 @@ document
             // Find player in our PostgreSQL player list
             const player =
                 allPlayers.find(
-                    p => p.id === playerId
+                    p => p.uid === playerId
                 );
 
 
@@ -581,9 +581,9 @@ document
                 // Add player to current game
                 players.push({
 
-                    id: player.id,
+                    id: player.uid,
 
-                    name: player.name,
+                    name: player.username,
 
                     color: player.color,
 
