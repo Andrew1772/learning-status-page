@@ -43,6 +43,18 @@ def create_new_player(username="Cornball", color="white"):
             conn.rollback()
             continue
 
+def get_players():
+    conn = connect_to_database()
+    cursor = conn.cursor()
+
+    get_players = "SELECT uid, username, color, elo FROM players;"
+    cursor.execute(get_players)
+    rows = cursor.fetchall()
+
+    players = [{"uid": row[0], "username": row[1], "color": row[2], "elo": row[3]} for row in rows]
+
+    return players
+
 
 def update_username(uid, username):
     conn = connect_to_database()

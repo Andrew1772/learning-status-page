@@ -14,32 +14,9 @@ import database
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-default_players = [
-    {
-        "name": "Player 1",
-        "life": 40,
-        "color": "red"
-    },
-    {
-        "name": "Player 2",
-        "life": 40,
-        "color": "green"
-    },
-    {
-        "name": "Player 3",
-        "life": 40,
-        "color": "purple"
-    },
-    {
-        "name": "Player 4",
-        "life": 40,
-        "color": "yellow"
-    }
-]
-
 
 # ============================================================
-# WEB SERVER
+# WEB SERVER not in use. May want this structure in the future
 # ============================================================
 
 
@@ -60,11 +37,12 @@ default_players = [
 
 @app.get("/")
 async def homepage(request: Request):
+    players = database.get_players()
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
-            "players": default_players,
+            "players": players,
         }
     )
 
@@ -72,18 +50,19 @@ async def homepage(request: Request):
 async def create_player_page():
     return FileResponse("static/create_player.html")
 
+@app.get("/winner_winner_chicken_dinner")
+async def winner():
+    await websocket.accept()
+
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    print("here")
     await websocket.accept()
 
-    print("here")
     while True:
         data = await websocket.receive_json()
 
         database.create_new_player(data["username"], data["color"])
-        print("here2")
 
 
 

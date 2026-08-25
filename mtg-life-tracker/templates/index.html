@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <!-- The onchange attribute tells the browser to look at the selected option's value and change the page address -->
-<select name="page-navigator" onchange="location = this.value;">
-  <option value="" selected disabled>Choose a page...</option>
-  <option value="http://localhost:8000/">Home Page</option>
-  <option value="http://localhost:8000/create_player/">Create Player</option>
-  <option value="http://localhost:8000/leaderboard/">Leaderboard</option>
-</select>
-
 <head>
     <meta charset="UTF-8">
 
@@ -19,6 +11,7 @@
 
     <title>MTG Life Tracker</title>
 
+    <!-- This is the css, and everything with style -->
     <style>
 
         * {
@@ -33,20 +26,121 @@
             min-height: 100vh;
         }
 
+        /* =====================================================
+           NAVIGATION
+           ===================================================== */
+
+        #page-navigator {
+            margin: 10px;
+        }
+
+        #page-navigator select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 6px;
+        }
+
+
+        /* =====================================================
+           HEADINGS
+           ===================================================== */
+
         h1 {
             text-align: center;
             margin: 15px 0;
             font-size: 28px;
         }
 
+        h2 {
+            text-align: center;
+        }
+
+
+        /* =====================================================
+           GAME SETUP
+           ===================================================== */
+
+        #game-setup {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 20px;
+
+            background: #222;
+
+            border-radius: 15px;
+            border: 2px solid #444;
+        }
+
+        #player-selects {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            margin: 20px 0;
+        }
+
+        .player-select-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-select-row label {
+            width: 80px;
+            font-size: 18px;
+        }
+
+        .player-select-row select {
+            flex: 1;
+
+            padding: 10px;
+
+            font-size: 18px;
+
+            border-radius: 8px;
+            border: none;
+        }
+
+        #start-game {
+            display: block;
+
+            margin: 20px auto 0;
+
+            padding: 12px 30px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: #239b56;
+
+            color: white;
+
+            font-size: 20px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        #start-game:active {
+            transform: scale(0.95);
+        }
+
+
+        /* =====================================================
+           PLAYERS
+           ===================================================== */
+
         #players {
             display: grid;
+
             grid-template-columns: 1fr 1fr;
+
             gap: 10px;
 
             padding: 10px;
 
             max-width: 900px;
+
             margin: auto;
         }
 
@@ -54,13 +148,17 @@
             min-height: 40vh;
 
             border: 3px solid var(--player-color);
+
             border-radius: 15px;
 
             padding: 15px;
 
             display: flex;
+
             flex-direction: column;
+
             justify-content: space-between;
+
             align-items: center;
 
             background: #222;
@@ -78,10 +176,16 @@
             color: var(--player-color);
         }
 
+
+        /* =====================================================
+           BUTTONS
+           ===================================================== */
+
         .buttons {
             width: 100%;
 
             display: grid;
+
             grid-template-columns: 1fr 1fr;
 
             gap: 8px;
@@ -89,12 +193,15 @@
 
         button {
             border: none;
+
             border-radius: 10px;
 
             padding: 15px;
 
             color: white;
+
             font-size: 24px;
+
             font-weight: bold;
 
             cursor: pointer;
@@ -112,6 +219,89 @@
             background: #239b56;
         }
 
+        /* =====================================================
+        COMMANDER DAMAGE
+        ===================================================== */
+        
+        .commander-button {
+            width: 100%;
+            margin-top: 10px;
+            background: #6c3483;
+            font-size: 18px;
+        }
+        
+        #commander-modal {
+            display: none;
+        
+            position: fixed;
+            inset: 0;
+        
+            background: rgba(0, 0, 0, 0.8);
+        
+            align-items: center;
+            justify-content: center;
+        
+            padding: 20px;
+        }
+        
+        #commander-modal.open {
+            display: flex;
+        }
+        
+        .commander-modal-content {
+            width: 100%;
+            max-width: 500px;
+        
+            background: #222;
+        
+            border: 2px solid #555;
+            border-radius: 15px;
+        
+            padding: 20px;
+        }
+        
+        .commander-damage-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            gap: 8px;
+            align-items: center;
+        
+            margin: 10px 0;
+        }
+        
+        .commander-damage-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .commander-damage-value {
+            min-width: 50px;
+        
+            text-align: center;
+        
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .commander-damage-row button {
+            padding: 10px 15px;
+            font-size: 18px;
+        }
+        
+        #close-commander {
+            display: block;
+        
+            width: 100%;
+            margin-top: 20px;
+        
+            background: #555;
+        }
+
+
+        /* =====================================================
+           RESET
+           ===================================================== */
+
         #reset {
             display: block;
 
@@ -124,6 +314,12 @@
             font-size: 18px;
         }
 
+
+        /* =====================================================
+           MOBILE
+           ===================================================== */
+        
+        /* media is active only when the screen is 600 pixels wide or smaller */
         @media (max-width: 600px) {
 
             #players {
@@ -132,8 +328,8 @@
             }
 
             .player {
-                min-height: 42vh;
-                padding: 10px;
+                min-height: 40vh;
+                padding: 12px;
             }
 
             .player-name {
@@ -145,8 +341,8 @@
             }
 
             button {
-                font-size: 18px;
                 padding: 12px;
+                font-size: 20px;
             }
 
         }
@@ -154,9 +350,80 @@
     </style>
 </head>
 
+
 <body>
 
-    <h1>MTG Life Tracker</h1>
+
+<!-- =========================================================
+     PAGE NAVIGATION
+     ========================================================= -->
+
+<div id="page-navigator">
+
+    <select
+        name="page-navigator"
+        onchange="location = this.value;"
+    >
+
+        <option value="" selected disabled>
+            Choose a page...
+        </option>
+
+        <option value="http://localhost:8000/">
+            Player Select
+        </option>
+
+        <option value="http://localhost:8000/create_player/">
+            Create Player
+        </option>
+
+        <option value="http://localhost:8000/leaderboard/">
+            Leaderboard
+        </option>
+
+    </select>
+
+</div>
+
+
+<!-- =========================================================
+     TITLE
+     ========================================================= -->
+
+<h1>
+    MTG Life Tracker
+</h1>
+
+
+<!-- =========================================================
+     GAME SETUP
+     ========================================================= -->
+
+<div id="game-setup">
+
+    <h2>
+        Choose Players
+    </h2>
+
+    <div id="player-selects">
+        <!-- JavaScript creates the dropdowns here -->
+    </div>
+
+    <button id="start-game">
+        Start Game
+    </button>
+
+</div>
+
+
+<!-- =========================================================
+     ACTUAL GAME
+     ========================================================= -->
+
+<div
+    id="game"
+    style="display: none;"
+>
 
     <div id="players"></div>
 
@@ -164,117 +431,607 @@
         Reset Game
     </button>
 
+</div>
 
-    <script>
+<div id="commander-modal">
 
-        // =====================================================
-        // DISPLAY
-        // =====================================================
+    <div class="commander-modal-content">
 
-        const players = {{ players | tojson }};
+        <h2 id="commander-title">
+            Commander Damage
+        </h2>
 
-        function renderPlayers() {
+        <div id="commander-damage-list"></div>
 
-            const container =
-                document.getElementById("players");
+        <button id="close-commander">
+            Close
+        </button>
 
-            container.innerHTML = "";
+    </div>
+
+</div>
 
 
-            players.forEach((player, index) => {
+<script>
 
-                const element =
-                    document.createElement("div");
 
-                element.className = "player";
+// =============================================================
+// DATABASE PLAYERS
+// =============================================================
+//
+// This is JavaScript, this controls the application's behavior
+// FastAPI/Jinja puts your PostgreSQL players here.
+//
+// =============================================================
 
-                element.style.setProperty(
-                    "--player-color",
-                    player.color
+// This is where players is passed from the python server, and used
+// in the rest of this html file
+const allPlayers = {{ players | tojson }};
+
+
+// =============================================================
+// CURRENT GAME
+// =============================================================
+//
+// This starts empty.
+//
+// Once the user chooses players and presses
+// "Start Game", this array gets filled.
+//
+// =============================================================
+
+// These are just the players in the current game
+let players = [];
+
+
+// =============================================================
+// CREATE PLAYER DROPDOWNS
+// =============================================================
+
+const playerSelects =
+    document.getElementById("player-selects");
+
+// This creates the life total screen
+for (let i = 0; i < 4; i++) {
+
+    // Create a row
+    const row =
+        document.createElement("div");
+
+    row.className =
+        "player-select-row";
+
+
+    // Create label
+    const label =
+        document.createElement("label");
+
+    label.textContent =
+        `Player ${i + 1}:`;
+
+
+    // Create select
+    const select =
+        document.createElement("select");
+
+
+    // Give the select an ID
+    select.id =
+        `player-select-${i}`;
+
+
+    // First/default option
+    const defaultOption =
+        document.createElement("option");
+
+    defaultOption.value = "";
+
+    defaultOption.textContent =
+        "Choose player...";
+
+    defaultOption.selected = true;
+
+    select.appendChild(defaultOption);
+
+
+    // Add all players from PostgreSQL
+    allPlayers.forEach(player => {
+
+        const option =
+            document.createElement("option");
+
+        // Database ID
+        option.value =
+            player.uid;
+
+        // Name shown to user
+        option.textContent =
+            player.username;
+
+        select.appendChild(option);
+
+    });
+
+
+    // Add label and select to row
+    row.appendChild(label);
+
+    row.appendChild(select);
+
+
+    // Add row to page
+    playerSelects.appendChild(row);
+
+}
+
+
+// =============================================================
+// CHECK FOR DUPLICATE PLAYERS
+// =============================================================
+
+function hasDuplicatePlayers() {
+
+    const selects =
+        document.querySelectorAll(
+            "#player-selects select"
+        );
+
+
+    const selectedIds = [];
+
+
+    selects.forEach(select => {
+
+        if (select.value !== "") {
+
+            selectedIds.push(
+                select.value
+            );
+
+        }
+
+    });
+
+
+    return (
+        new Set(selectedIds).size
+        !== selectedIds.length
+    );
+}
+
+
+// =============================================================
+// START GAME
+// =============================================================
+
+document
+    .getElementById("start-game")
+    .addEventListener("click", function() {
+
+
+        // -----------------------------------------------------
+        // Check for duplicate players
+        // -----------------------------------------------------
+
+        if (hasDuplicatePlayers()) {
+
+            alert(
+                "You cannot select the same player twice."
+            );
+
+            return;
+        }
+
+
+        // -----------------------------------------------------
+        // Start with an empty game
+        // -----------------------------------------------------
+
+        players = [];
+
+
+        // -----------------------------------------------------
+        // Get all dropdowns
+        // -----------------------------------------------------
+
+        const selects =
+            document.querySelectorAll(
+                "#player-selects select"
+            );
+
+
+        // -----------------------------------------------------
+        // Get selected players
+        // -----------------------------------------------------
+
+        selects.forEach(select => {
+
+            if (select.value === "") {
+                return;
+            }
+
+
+            // Convert database ID from string to number
+            const playerId =
+                Number(select.value);
+
+
+            // Find player in our PostgreSQL player list
+            const player =
+                allPlayers.find(
+                    p => p.uid === playerId
                 );
 
 
-                element.innerHTML = `
+            if (player) {
 
-                    <div class="player-name">
-                        ${player.name}
-                    </div>
+                // Add player to current game
+                players.push({
 
-                    <div class="life">
-                        ${player.life}
-                    </div>
+                    id: player.uid,
 
-                    <div class="buttons">
+                    name: player.username,
 
-                        <button
-                            class="minus"
-                            onclick="changeLife(${index}, -5)"
-                        >
-                            -5
-                        </button>
+                    color: player.color,
 
-                        <button
-                            class="plus"
-                            onclick="changeLife(${index}, 5)"
-                        >
-                            +5
-                        </button>
+                    // Every player starts at 40
+                    life: 40,
 
-                        <button
-                            class="minus"
-                            onclick="changeLife(${index}, -1)"
-                        >
-                            -1
-                        </button>
+                    // Commander Damage starts at 0
+                    commanderDamage: {}
 
-                        <button
-                            class="plus"
-                            onclick="changeLife(${index}, 1)"
-                        >
-                            +1
-
-                    </div>
-                `;
-
-
-                container.appendChild(element);
-
-            });
-        }
-
-
-        // =====================================================
-        // LIFE CHANGES
-        // =====================================================
-
-        function changeLife(playerIndex, amount) {
-
-            players[playerIndex].life += amount;
-
-            renderPlayers();
-        }
-
-
-        // =====================================================
-        // RESET
-        // =====================================================
-
-        document
-            .getElementById("reset")
-            .addEventListener("click", function() {
-
-                players.forEach(player => {
-                    player.life = 40;
                 });
 
-                renderPlayers();
+            }
+
+        });
+
+        // This starts the commander damage for each player at 0
+        // for each player in the game
+        players.forEach(player => {
+            players.forEach(otherPlayer => {
+                if (player.id !== otherPlayer.id) {
+                    player.commanderDamage[otherPlayer.id] = 0;
+                }
             });
+        });
 
 
-        // Initial display
+        // -----------------------------------------------------
+        // Require at least 2 players
+        // -----------------------------------------------------
+
+        if (players.length < 2) {
+
+            alert(
+                "Choose at least 2 players."
+            );
+
+            return;
+        }
+
+
+        // -----------------------------------------------------
+        // Hide setup screen
+        // -----------------------------------------------------
+
+        document
+            .getElementById("game-setup")
+            .style.display = "none";
+
+
+        // -----------------------------------------------------
+        // Show game screen
+        // -----------------------------------------------------
+
+        document
+            .getElementById("game")
+            .style.display = "block";
+
+
+        // -----------------------------------------------------
+        // Display players
+        // -----------------------------------------------------
+
         renderPlayers();
 
-    </script>
+    });
+
+
+// =============================================================
+// DISPLAY PLAYERS
+// =============================================================
+
+function renderPlayers() {
+
+
+    const container =
+        document.getElementById("players");
+
+
+    // Remove old display
+    container.innerHTML = "";
+
+
+    // Create a box for every player
+    players.forEach((player, index) => {
+
+
+        const element =
+            document.createElement("div");
+
+
+        element.className =
+            "player";
+
+
+        // Use player's color from PostgreSQL
+        element.style.setProperty(
+            "--player-color",
+            player.color
+        );
+
+
+        element.innerHTML = `
+
+            <div class="player-name">
+                ${player.name}
+            </div>
+
+
+            <div class="life">
+                ${player.life}
+            </div>
+
+
+            <div class="buttons">
+
+
+                <button
+                    class="minus"
+                    onclick="changeLife(${index}, -5)"
+                >
+                    -5
+                </button>
+
+
+                <button
+                    class="plus"
+                    onclick="changeLife(${index}, 5)"
+                >
+                    +5
+                </button>
+
+
+                <button
+                    class="minus"
+                    onclick="changeLife(${index}, -1)"
+                >
+                    -1
+                </button>
+
+
+                <button
+                    class="plus"
+                    onclick="changeLife(${index}, 1)"
+                >
+                    +1
+                </button>
+
+            </div>
+
+            <button
+                class="commander-button"
+                onclick="openCommanderDamage(${index})"
+            >
+                Commander Damage
+            </button>
+
+
+
+        `;
+
+
+        container.appendChild(element);
+
+    });
+
+}
+
+
+// =============================================================
+// CHANGE LIFE
+// =============================================================
+
+function changeLife(playerIndex, amount) {
+
+    players[playerIndex].life += amount;
+    renderPlayers();
+}
+
+function openCommanderDamage(playerIndex) {
+
+    const player = players[playerIndex];
+
+    const modal =
+        document.getElementById("commander-modal");
+
+    const title =
+        document.getElementById("commander-title");
+
+    const list =
+        document.getElementById("commander-damage-list");
+
+
+    title.textContent =
+        `${player.name} - Commander Damage`;
+
+
+    list.innerHTML = "";
+
+
+    players.forEach(otherPlayer => {
+
+        // Don't show the current player
+        if (otherPlayer.id === player.id) {
+            return;
+        }
+
+
+        const damage =
+            player.commanderDamage[otherPlayer.id];
+
+
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "commander-damage-row";
+
+
+        row.innerHTML = `
+
+            <div class="commander-damage-name">
+                ${otherPlayer.name}
+            </div>
+
+            <button
+                class="minus"
+                onclick="changeCommanderDamage(
+                    ${playerIndex},
+                    ${otherPlayer.id},
+                    -1
+                )"
+            >
+                -1
+            </button>
+
+            <div class="commander-damage-value">
+                ${damage}
+            </div>
+
+            <button
+                class="plus"
+                onclick="changeCommanderDamage(
+                    ${playerIndex},
+                    ${otherPlayer.id},
+                    1
+                )"
+            >
+                +1
+            </button>
+
+        `;
+
+
+        list.appendChild(row);
+
+    });
+
+
+    modal.classList.add("open");
+
+}
+
+function changeCommanderDamage(
+    playerIndex,
+    commanderId,
+    amount
+) {
+
+    const player =
+        players[playerIndex];
+
+
+    player.commanderDamage[commanderId] += amount;
+
+
+    // Don't allow negative commander damage
+    if (player.commanderDamage[commanderId] < 0) {
+
+        player.commanderDamage[commanderId] = 0;
+
+    }
+
+
+    // Redraw the commander popup
+    openCommanderDamage(playerIndex);
+
+}
+
+// =============================================================
+// CHANGE COMMANDER DAMAGE
+// =============================================================
+
+function changeCommanderDamage(
+    playerIndex,
+    commanderId,
+    amount
+) {
+
+    const player =
+        players[playerIndex];
+
+    player.commanderDamage[commanderId] += amount;
+
+    if (player.commanderDamage[commanderId] < 0) {
+
+        player.commanderDamage[commanderId] = 0;
+
+    }
+
+    openCommanderDamage(playerIndex);
+}
+
+
+// =============================================================
+// CLOSE COMMANDER DAMAGE
+// =============================================================
+
+document
+    .getElementById("close-commander")
+    .addEventListener("click", function() {
+
+        document
+            .getElementById("commander-modal")
+            .classList.remove("open");
+
+    });
+
+
+
+// =============================================================
+// RESET GAME
+// =============================================================
+
+document
+    .getElementById("reset")
+    .addEventListener("click", function() {
+
+        players.forEach(player => {
+
+            // Reset life
+            player.life = 40;
+
+
+            // Reset commander damage
+            for (const commanderId in player.commanderDamage) {
+
+                player.commanderDamage[commanderId] = 0;
+
+            }
+
+        });
+
+
+        renderPlayers();
+
+    });
+
+
+
+</script>
+
 
 </body>
 
