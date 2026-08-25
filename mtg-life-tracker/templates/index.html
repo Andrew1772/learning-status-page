@@ -11,6 +11,7 @@
 
     <title>MTG Life Tracker</title>
 
+    <!-- This is the css, and everything with style -->
     <style>
 
         * {
@@ -218,6 +219,84 @@
             background: #239b56;
         }
 
+        /* =====================================================
+        COMMANDER DAMAGE
+        ===================================================== */
+        
+        .commander-button {
+            width: 100%;
+            margin-top: 10px;
+            background: #6c3483;
+            font-size: 18px;
+        }
+        
+        #commander-modal {
+            display: none;
+        
+            position: fixed;
+            inset: 0;
+        
+            background: rgba(0, 0, 0, 0.8);
+        
+            align-items: center;
+            justify-content: center;
+        
+            padding: 20px;
+        }
+        
+        #commander-modal.open {
+            display: flex;
+        }
+        
+        .commander-modal-content {
+            width: 100%;
+            max-width: 500px;
+        
+            background: #222;
+        
+            border: 2px solid #555;
+            border-radius: 15px;
+        
+            padding: 20px;
+        }
+        
+        .commander-damage-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            gap: 8px;
+            align-items: center;
+        
+            margin: 10px 0;
+        }
+        
+        .commander-damage-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .commander-damage-value {
+            min-width: 50px;
+        
+            text-align: center;
+        
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .commander-damage-row button {
+            padding: 10px 15px;
+            font-size: 18px;
+        }
+        
+        #close-commander {
+            display: block;
+        
+            width: 100%;
+            margin-top: 20px;
+        
+            background: #555;
+        }
+
 
         /* =====================================================
            RESET
@@ -239,7 +318,8 @@
         /* =====================================================
            MOBILE
            ===================================================== */
-
+        
+        /* media is active only when the screen is 600 pixels wide or smaller */
         @media (max-width: 600px) {
 
             #players {
@@ -290,7 +370,7 @@
         </option>
 
         <option value="http://localhost:8000/">
-            Home Page
+            Player Select
         </option>
 
         <option value="http://localhost:8000/create_player/">
@@ -353,6 +433,24 @@
 
 </div>
 
+<div id="commander-modal">
+
+    <div class="commander-modal-content">
+
+        <h2 id="commander-title">
+            Commander Damage
+        </h2>
+
+        <div id="commander-damage-list"></div>
+
+        <button id="close-commander">
+            Close
+        </button>
+
+    </div>
+
+</div>
+
 
 <script>
 
@@ -361,25 +459,13 @@
 // DATABASE PLAYERS
 // =============================================================
 //
+// This is JavaScript, this controls the application's behavior
 // FastAPI/Jinja puts your PostgreSQL players here.
-//
-// For example:
-//
-// [
-//     {
-//         "id": 1,
-//         "name": "Alice",
-//         "color": "#e74c3c"
-//     },
-//     {
-//         "id": 2,
-//         "name": "Bob",
-//         "color": "#3498db"
-//     }
-// ]
 //
 // =============================================================
 
+// This is where players is passed from the python server, and used
+// in the rest of this html file
 const allPlayers = {{ players | tojson }};
 
 
@@ -394,6 +480,7 @@ const allPlayers = {{ players | tojson }};
 //
 // =============================================================
 
+// These are just the players in the current game
 let players = [];
 
 
@@ -404,7 +491,7 @@ let players = [];
 const playerSelects =
     document.getElementById("player-selects");
 
-
+// This creates the life total screen
 for (let i = 0; i < 4; i++) {
 
     // Create a row
@@ -588,12 +675,25 @@ document
                     color: player.color,
 
                     // Every player starts at 40
-                    life: 40
+                    life: 40,
+
+                    // Commander Damage starts at 0
+                    commanderDamage: {}
 
                 });
 
             }
 
+        });
+
+        // This starts the commander damage for each player at 0
+        // for each player in the game
+        players.forEach(player => {
+            players.forEach(otherPlayer => {
+                if (player.id !== otherPlayer.id) {
+                    player.commanderDamage[otherPlayer.id] = 0;
+                }
+            });
         });
 
 
@@ -718,8 +818,16 @@ function renderPlayers() {
                     +1
                 </button>
 
-
             </div>
+
+            <button
+                class="commander-button"
+                onclick="openCommanderDamage(${index})"
+            >
+                Commander Damage
+            </button>
+
+
 
         `;
 
@@ -737,13 +845,159 @@ function renderPlayers() {
 
 function changeLife(playerIndex, amount) {
 
-
     players[playerIndex].life += amount;
-
-
     renderPlayers();
+}
+
+function openCommanderDamage(playerIndex) {
+
+    const player = players[playerIndex];
+
+    const modal =
+        document.getElementById("commander-modal");
+
+    const title =
+        document.getElementById("commander-title");
+
+    const list =
+        document.getElementById("commander-damage-list");
+
+
+    title.textContent =
+        `${player.name} - Commander Damage`;
+
+
+    list.innerHTML = "";
+
+
+    players.forEach(otherPlayer => {
+
+        // Don't show the current player
+        if (otherPlayer.id === player.id) {
+            return;
+        }
+
+
+        const damage =
+            player.commanderDamage[otherPlayer.id];
+
+
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "commander-damage-row";
+
+
+        row.innerHTML = `
+
+            <div class="commander-damage-name">
+                ${otherPlayer.name}
+            </div>
+
+            <button
+                class="minus"
+                onclick="changeCommanderDamage(
+                    ${playerIndex},
+                    ${otherPlayer.id},
+                    -1
+                )"
+            >
+                -1
+            </button>
+
+            <div class="commander-damage-value">
+                ${damage}
+            </div>
+
+            <button
+                class="plus"
+                onclick="changeCommanderDamage(
+                    ${playerIndex},
+                    ${otherPlayer.id},
+                    1
+                )"
+            >
+                +1
+            </button>
+
+        `;
+
+
+        list.appendChild(row);
+
+    });
+
+
+    modal.classList.add("open");
 
 }
+
+function changeCommanderDamage(
+    playerIndex,
+    commanderId,
+    amount
+) {
+
+    const player =
+        players[playerIndex];
+
+
+    player.commanderDamage[commanderId] += amount;
+
+
+    // Don't allow negative commander damage
+    if (player.commanderDamage[commanderId] < 0) {
+
+        player.commanderDamage[commanderId] = 0;
+
+    }
+
+
+    // Redraw the commander popup
+    openCommanderDamage(playerIndex);
+
+}
+
+// =============================================================
+// CHANGE COMMANDER DAMAGE
+// =============================================================
+
+function changeCommanderDamage(
+    playerIndex,
+    commanderId,
+    amount
+) {
+
+    const player =
+        players[playerIndex];
+
+    player.commanderDamage[commanderId] += amount;
+
+    if (player.commanderDamage[commanderId] < 0) {
+
+        player.commanderDamage[commanderId] = 0;
+
+    }
+
+    openCommanderDamage(playerIndex);
+}
+
+
+// =============================================================
+// CLOSE COMMANDER DAMAGE
+// =============================================================
+
+document
+    .getElementById("close-commander")
+    .addEventListener("click", function() {
+
+        document
+            .getElementById("commander-modal")
+            .classList.remove("open");
+
+    });
+
 
 
 // =============================================================
@@ -754,10 +1008,18 @@ document
     .getElementById("reset")
     .addEventListener("click", function() {
 
-
         players.forEach(player => {
 
+            // Reset life
             player.life = 40;
+
+
+            // Reset commander damage
+            for (const commanderId in player.commanderDamage) {
+
+                player.commanderDamage[commanderId] = 0;
+
+            }
 
         });
 
@@ -765,6 +1027,7 @@ document
         renderPlayers();
 
     });
+
 
 
 </script>
